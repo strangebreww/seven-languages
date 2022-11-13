@@ -57,3 +57,63 @@ List myAverage := method(
 )
 
 "List average" println; list(2, 8, 9) myAverage println
+
+List2d := Object clone do (
+	init := method(
+    	self lists := list()
+  	)
+  
+	dim := method(x, y,
+		self lists preallocateToSize(y)
+		for(i, 0, y - 1, self lists append(list() preallocateToSize(x)))
+		self
+	)
+
+	set := method(x, y, value,
+		self lists at(y) atInsert(x, value)
+	)
+
+	get := method(x, y,
+		self lists at(y) at(x)
+	)
+
+	toFile := method(name,
+    	File with(name) open write(self serialized) close
+  	)
+  
+  	fromFile := method(name,
+    	doRelativeFile(name)
+  	) 
+)
+
+myList := List2d clone
+
+myList dim(2, 3)
+
+myList set(0, 0, "Q")
+myList set(1, 0, "W")
+myList set(0, 1, "E")
+myList set(1, 1, "R")
+myList set(0, 2, "T")
+myList set(1, 2, "Y")
+
+fileName := "list2d.txt"
+
+myList toFile(fileName)
+
+anotherList := List2d fromFile(fileName)
+
+anotherList toFile("list2d_another.txt")
+
+guessed := Random value(100) ceil
+
+i := 0
+
+while (i < 10,
+	guess := File standardInput readLine("Enter your guess: ") asNumber
+	if (
+		guess == guessed,
+		"Correct!" println; i = 10, 
+		if (guess > guessed, "Lower" println, "Greater" println); i = i + 1
+	)
+)
